@@ -34,11 +34,10 @@ namespace GameLibrary.Models.Maps
             {
                 foreach (var tile in tileGroup)
                 {
-                    Point2D loc = new Point2D(tile.Location);
-                    if (!Grid.ContainsKey(loc))
-                        Grid.Add(loc, tile);
+                    if (!Grid.ContainsKey(tile.Location))
+                        Grid.Add(tile.Location, tile);
                     else
-                        Grid[loc] = tile;
+                        Grid[tile.Location] = tile;
                 }
             }
         }
