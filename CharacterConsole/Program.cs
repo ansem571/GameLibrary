@@ -13,12 +13,11 @@ namespace CharacterConsole
     {
         private static void Main(string[] args)
         {
-            string wanted_path = GetParent(GetParent(Directory.GetCurrentDirectory()));
-            Console.WriteLine(wanted_path);
-
-            var dir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var xmlDocPath = dir + $"\\config.xml";
-            var mapPath = dir + $"\\map.png";
+            //Works for getting files from desktop
+            //var dir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var dir = Path.Combine(Environment.CurrentDirectory, @"Files\");
+            var xmlDocPath = dir + $"config.xml";
+            var mapPath = dir + $"map.png";
 
             IReader reader = new XmlReader();
             reader.ReadDocument(xmlDocPath);

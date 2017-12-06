@@ -102,3 +102,5 @@ C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\GameLibrary\obj\Debug
 C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\GameLibrary\obj\Debug\GameLibrary.csproj.CoreCompileInputs.cache
 C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\GameLibrary\obj\Debug\GameLibrary.dll
 C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\GameLibrary\obj\Debug\GameLibrary.pdb
+C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\GameLibrary\bin\Debug\Files\config.xml
+C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\GameLibrary\bin\Debug\Files\map.png

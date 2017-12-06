@@ -70,12 +70,6 @@
     <Compile Include="Writer\TextWriter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\..\config.xml">
-      <Link>Files\config.xml</Link>
-    </Content>
-    <Content Include="..\..\..\map.png">
-      <Link>Files\map.png</Link>
-    </Content>
     <None Include="Files\WhoDoesWhat.xml" />
     <None Include="Files\WhoDoesWhat.txt" />
   </ItemGroup>
@@ -84,6 +78,14 @@
       <Project>{922b14b1-a587-4555-824a-9df2f258a4e9}</Project>
       <Name>GameLibrary.Interfaces</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Files\config.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Files\map.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
