@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -82,7 +83,7 @@ namespace GameLibrary.Models.Maps
 
             CreateMap(data, Width, Height);
 
-            //ResizeMapProper(data);
+            ResizeMapProper(data, 50);
         }
 
         private void CreateMap(byte[] data, int width, int height)
@@ -92,10 +93,10 @@ namespace GameLibrary.Models.Maps
             Marshal.Copy(data, 0, bitmapData.Scan0, data.Length);
             bmp.UnlockBits(bitmapData);
 
-            bmp.Save(PathToMap);
+            bmp.Save(PathToMap, ImageFormat.Png);
         }
 
-        private void ResizeMapProper(byte[] data, int scale = 50)
+        private void ResizeMapProper(byte[] data, int scale = 10)
         {
             List<byte> newData = new List<byte>();
             const int maxSize = 600;

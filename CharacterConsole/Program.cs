@@ -15,8 +15,8 @@ namespace CharacterConsole
         private static void Main(string[] args)
         {
             //Works for getting files from desktop
-            var dir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)+"\\"; 
-            //var dir = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\Files\"));
+            //var dir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)+"\\"; 
+            var dir = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\Files\"));
             var xmlDocPath = dir + $"config.xml";
             var mapPath = dir + $"map.png";
 
