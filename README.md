@@ -11,16 +11,16 @@ Now to get into the current code developed.
 
 ## Player, Enemies, Stats
 
-####Currently there are only 2 types of damage and defense.
+#### Currently there are only 2 types of damage and defense.
 * Physical
 * Magic
 
-####Damage types will be reworked at a later date to the following
+#### Damage types will be reworked at a later date to the following
 * Melee
 * Ranged
 * Magic
 
-####With any of the following Secondary types
+#### With any of the following Secondary types
 * Fire
 * Water
 * Earth
@@ -37,14 +37,14 @@ Combat actions are Attack (with or without magic), Charge Mana, and Retreat. The
 
 ## Map and Tiles
 The map works on a 2D Grid system. Each location is given a tile. The current reader for tiles adds the base terrain tiles out first, then applies special tile types to replace the terrain type.
-####Terrain tiles
+#### Terrain tiles
 * Desert
 * Forest
 * Mountain
 * Plains
 * Seaside
 
-####Special tiles
+#### Special tiles
 * Dungeon
 * Enemy
 * Point of Interest (POI)
