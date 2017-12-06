@@ -34,10 +34,11 @@ namespace GameLibrary.Models.Maps
             {
                 foreach (var tile in tileGroup)
                 {
-                    if (!Grid.ContainsKey(tile.Location))
-                        Grid.Add(tile.Location, tile);
+                    Point2D loc = new Point2D(tile.Location);
+                    if (!Grid.ContainsKey(loc))
+                        Grid.Add(loc, tile);
                     else
-                        Grid[tile.Location] = tile;
+                        Grid[loc] = tile;
                 }
             }
         }
@@ -68,6 +69,7 @@ namespace GameLibrary.Models.Maps
             DrawMap(loc);
             if (ImageProcess != null && !ImageProcess.HasExited)
             {
+                ImageProcess.CloseMainWindow();
                 ImageProcess.Kill();
                 Thread.Sleep(1000);
                 ImageProcess = new Process();
@@ -77,23 +79,61 @@ namespace GameLibrary.Models.Maps
         private void DrawMap(IPoint playerLoc)
         {
             var data = GetMapData(playerLoc);
-            var forestCheck = data.ToList().Where(x => x == 10).Count();
 
-            var height = Height;
-            var width = Width;
+            CreateMap(data, Width, Height);
 
-            var scaleHeight = height;
-            var scaleWidth = width;
+            //ResizeMapProper(data);
+        }
 
+        private void CreateMap(byte[] data, int width, int height)
+        {
             Bitmap bmp = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             var bitmapData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.WriteOnly, bmp.PixelFormat);
             Marshal.Copy(data, 0, bitmapData.Scan0, data.Length);
             bmp.UnlockBits(bitmapData);
 
             bmp.Save(PathToMap);
+        }
 
-            bmp = ResizeMap(bmp, 1);
-            bmp.Save(PathToMap);
+        private void ResizeMapProper(byte[] data, int scale = 50)
+        {
+            List<byte> newData = new List<byte>();
+            const int maxSize = 600;
+            var ratioX = scale * Width > maxSize ? maxSize / Width : scale;
+            var ratioY = scale * Height > maxSize ? maxSize / Height : scale;
+
+            scale = ratioX < ratioY ? ratioX : ratioY;
+            if (scale <= 1)
+                return;
+
+            var newHeight = Height * scale;
+            var newWidth = Width * scale;
+
+            int nextRowByteIndex = 0;
+            int rowByteIndex = 0;
+            int currentByteIndex = 0;
+
+            const int skip = 4;
+            for (var r = Height - 1; r >= 0; r--)
+            {
+                rowByteIndex = nextRowByteIndex;
+                for (var scaledRow = 0; scaledRow < scale; scaledRow++)
+                {
+                    currentByteIndex = rowByteIndex;
+                    for (var c = 0; c < Width; c++)
+                    {
+                        for (var scaledColumn = 0; scaledColumn < scale; scaledColumn++)
+                        {
+                            List<byte> color = data.ToList().GetRange(currentByteIndex, skip);
+                            newData.AddRange(color);
+                        }
+                        currentByteIndex += skip;
+                    }
+                    nextRowByteIndex = currentByteIndex;
+                }
+            }
+
+            CreateMap(newData.ToArray(), newHeight, newWidth);
         }
 
         private Bitmap ResizeMap(Bitmap bmp, int scale = 100)

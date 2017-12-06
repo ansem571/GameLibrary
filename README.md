@@ -1,10 +1,13 @@
 # CharacterLibrary
-Notes are based on Version *0.1.0.1*
+Notes are based on Version *0.1.0.3*
+
 Date: 12/6/2017
 
 ## Introductions
 This will be a basis for future Project Developments.
+
 Any critic will be appreciated.
+
 I developed this library in the hopes that I will be able to expand upon these concepts at another date. Although this library contains a Console App, the main purose of this library is to be an external library for future projects. The main puroses of this solution is the development of the Interface project as well as the library implementation. The CharacterLibrary implementation is based on a console/2D app. Although, this can be updated to include 3D (z-axis) points, I will need to add a source canvas to act as the UI, but more on that in a future update.
 
 Now to get into the current code developed.
@@ -55,4 +58,5 @@ Once you have entered a tile, the grid will register that you have at least "vis
 As stated previously, thanks to the implementation of our interfaces, we have to change almost no code in neither the map nor the tiles themselves in order to integrate this implementation into Unity.
 There might have to be changes to add a 3rd dimension (z-axis) for the map, but limited changes will need to be made to the entities containing those points themselves. 
 
-> Thank you for reading, will attempt to update appropriately. > - Ansem571 12/6/17
+> Thank you for reading, will attempt to update appropriately.
+> Ansem571 12/6/17

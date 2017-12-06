@@ -106,5 +106,3 @@ C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\bin\
 C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\bin\Debug\GameLibrary.Interfaces.dll
 C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\bin\Debug\GameLibrary.Interfaces.pdb
 C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\bin\Debug\GameLibrary.pdb
-C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\bin\Debug\Files\config.xml
-C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\bin\Debug\Files\map.png
