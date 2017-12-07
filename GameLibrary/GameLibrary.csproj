@@ -84,6 +84,7 @@
     <Compile Include="Models\Tiles\Terrain\MountainTile.cs" />
     <Compile Include="Models\Tiles\Terrain\PlainsTile.cs" />
     <Compile Include="Models\Tiles\Terrain\SeasideTile.cs" />
+    <Compile Include="Models\VictoryConditions\DungeonVictoryCondition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Writer\TextWriter.cs" />
   </ItemGroup>
@@ -97,5 +98,6 @@
       <Name>GameLibrary.Interfaces</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

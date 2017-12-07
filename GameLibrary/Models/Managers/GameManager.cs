@@ -10,6 +10,7 @@ namespace GameLibrary.Models.Managers
     public class GameManager : IGameManager
     {
         public IMap Map { get; }
+        public IVictoryCondition VictoryCondition { get; }
         public IPlayer Player { get; }
         public IBattleManager BattleManager { get; }
         public string ConfigPath { get; }
@@ -17,11 +18,12 @@ namespace GameLibrary.Models.Managers
         private string EnemyAssemblyNamespace { get; }
         private int NumOfDungeonEnemies { get; }
 
-        public GameManager(IMap map, IPlayer player, IBattleManager battleManager, int numOfDungeonEnemies = 3, string assemblyName = "GameLibrary.Models.Enemies.", string configPath = null)
+        public GameManager(IMap map, IVictoryCondition victoryCondition, IPlayer player, IBattleManager battleManager, int numOfDungeonEnemies = 3, string assemblyName = "GameLibrary.Models.Enemies.", string configPath = null)
         {
-            Map = map;
-            Player = player;
-            BattleManager = battleManager;
+            Map = map ?? throw new ArgumentNullException(nameof(map));
+            VictoryCondition = victoryCondition ?? throw new ArgumentNullException(nameof(victoryCondition));
+            Player = player ?? throw new ArgumentNullException(nameof(player));
+            BattleManager = battleManager ?? throw new ArgumentNullException(nameof(player));
             NumOfDungeonEnemies = numOfDungeonEnemies;
 
             EnemyAssemblyNamespace = assemblyName;
@@ -32,7 +34,7 @@ namespace GameLibrary.Models.Managers
         {
             var loc = Player.CurrentLocation;
             Map.OpenMap(loc);
-            while (true)
+            while (VictoryCondition.VictoryAchieved)
             {
                 loc = Player.CurrentLocation;
                 Player.PrintStats(true);
@@ -68,12 +70,15 @@ namespace GameLibrary.Models.Managers
                             }
                             break;
                     }
+                    VictoryCondition.VictoryConditionAchieved(Player, Map);
                 }
                 catch (Exception e)
                 {
                     StaticHelperClass.PrintException(e, 1);
                 }
             }
+            VictoryCondition.DisplayVictoryMessage(Player, Map);
+            Quit();
         }
         public void Save()
         {

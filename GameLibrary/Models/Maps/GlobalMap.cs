@@ -35,11 +35,10 @@ namespace GameLibrary.Models.Maps
             {
                 foreach (var tile in tileGroup)
                 {
-                    Point2D loc = new Point2D(tile.Location);
-                    if (!Grid.ContainsKey(loc))
-                        Grid.Add(loc, tile);
+                    if (!Grid.ContainsKey(tile.Location))
+                        Grid.Add(tile.Location, tile);
                     else
-                        Grid[loc] = tile;
+                        Grid[tile.Location] = tile;
                 }
             }
         }
@@ -88,8 +87,8 @@ namespace GameLibrary.Models.Maps
 
         private void CreateMap(byte[] data, int width, int height)
         {
-            Bitmap bmp = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            var bitmapData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.WriteOnly, bmp.PixelFormat);
+            Bitmap bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+            var bitmapData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
             Marshal.Copy(data, 0, bitmapData.Scan0, data.Length);
             bmp.UnlockBits(bitmapData);
 
@@ -161,7 +160,6 @@ namespace GameLibrary.Models.Maps
                         if (!Grid[loc].Visited)
                         {
                             data.AddRange(Colors.FogOfWar);
-
                         }
                         else
                         {

@@ -4,6 +4,7 @@ using GameLibrary.Models;
 using GameLibrary.Models.Managers;
 using GameLibrary.Models.Maps;
 using GameLibrary.Models.Player;
+using GameLibrary.Models.VictoryConditions;
 using System;
 using System.IO;
 using System.Reflection;
@@ -15,9 +16,10 @@ namespace CharacterConsole
         private static void Main(string[] args)
         {
             //Works for getting files from desktop
-            //var dir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)+"\\"; 
             var dir = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\Files\"));
             var xmlDocPath = dir + $"config.xml";
+            //Needed for map to update properly
+            dir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)+"\\"; 
             var mapPath = dir + $"map.png";
 
             IReader reader = new XmlReader();
@@ -25,13 +27,15 @@ namespace CharacterConsole
 
             IMap map = new GlobalMap(reader.Width, reader.Height, mapPath, reader.Tiles);
 
+            IVictoryCondition victoryCondition = new DungeonVictoryCondition(map);
+
             IPlayer player = SetupPlayer(reader.Width, reader.Height);
 
             map.Grid[player.CurrentLocation].Visited = true;
 
             IBattleManager battleManager = new BattleManager();
 
-            IGameManager game = new GameManager(map, player, battleManager);
+            IGameManager game = new GameManager(map, victoryCondition, player, battleManager);
 
             game.Play();
         }
