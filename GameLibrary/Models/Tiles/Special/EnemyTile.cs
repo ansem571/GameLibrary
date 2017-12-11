@@ -1,11 +1,8 @@
 ﻿using GameLibrary.Helpers;
 using GameLibrary.Interfaces;
-using GameLibrary.Models.Managers;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 
 namespace GameLibrary.Models.Tiles.Special
 {

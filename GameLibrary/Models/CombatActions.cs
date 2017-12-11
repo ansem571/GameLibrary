@@ -1,7 +1,5 @@
-﻿using GameLibrary.Enums;
-using GameLibrary.Interfaces;
+﻿using GameLibrary.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 
 namespace GameLibrary.Models

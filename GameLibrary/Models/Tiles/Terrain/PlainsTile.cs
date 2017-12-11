@@ -1,6 +1,5 @@
 ﻿using GameLibrary.Interfaces;
 using System;
-using System.Collections.Generic;
 
 namespace GameLibrary.Models.Tiles.Terrain
 {

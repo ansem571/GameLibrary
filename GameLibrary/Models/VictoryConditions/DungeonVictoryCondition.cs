@@ -3,9 +3,7 @@ using GameLibrary.Models.Tiles.Special;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace GameLibrary.Models.VictoryConditions
 {

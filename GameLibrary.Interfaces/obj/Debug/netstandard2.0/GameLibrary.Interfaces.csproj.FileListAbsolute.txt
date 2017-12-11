@@ -6,4 +6,3 @@ C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\GameLibrary.Interface
 C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\GameLibrary.Interfaces\obj\Debug\netstandard2.0\GameLibrary.Interfaces.AssemblyInfo.cs
 C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\GameLibrary.Interfaces\obj\Debug\netstandard2.0\GameLibrary.Interfaces.dll
 C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\GameLibrary.Interfaces\obj\Debug\netstandard2.0\GameLibrary.Interfaces.pdb
-C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\GameLibrary.Interfaces\obj\Debug\netstandard2.0\GameLibrary.Interfaces.csprojResolveAssemblyReference.cache

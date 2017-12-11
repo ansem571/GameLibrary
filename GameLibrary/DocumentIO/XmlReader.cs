@@ -4,7 +4,6 @@ using GameLibrary.Interfaces;
 using GameLibrary.Models;
 using GameLibrary.Models.Tiles.Special;
 using GameLibrary.Models.Tiles.Terrain;
-using GameLibrary.Models.VictoryConditions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

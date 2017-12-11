@@ -6,18 +6,21 @@ using GameLibrary.Models.Maps;
 using GameLibrary.Models.Player;
 using GameLibrary.Models.Tiles.Special;
 using GameLibrary.Models.VictoryConditions;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 
 namespace CharacterConsole
 {
+    //Here is where I can be explicit on what objects types are.
     public class Program
     {
         private static void Main(string[] args)
         {
+            if (!IsWindows())
+                throw new Exception("Not running on a windows os");
+
             //Works for getting files from desktop
             var dir = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\Files\"));
             var xmlDocPath = dir + $"config.xml";
@@ -55,6 +58,15 @@ namespace CharacterConsole
                     dungeons.Add((DungeonTile)tile.Value);
             }
             return dungeons;
+        }
+
+        static bool IsWindows()
+        {
+            var reg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion");
+
+            string productName = (string)reg.GetValue("ProductName");
+
+            return productName.StartsWith("Windows");
         }
 
         private static string GetParent(string path)

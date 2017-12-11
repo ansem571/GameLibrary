@@ -1,5 +1,4 @@
-﻿using GameLibrary.Enums;
-using GameLibrary.Interfaces;
+﻿using GameLibrary.Interfaces;
 using System;
 
 namespace GameLibrary.Models.Enemies.Orc

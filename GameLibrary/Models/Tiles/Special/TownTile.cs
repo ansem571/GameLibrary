@@ -1,6 +1,5 @@
 ﻿using GameLibrary.Interfaces;
 using System;
-using System.Collections.Generic;
 
 namespace GameLibrary.Models.Tiles.Special
 {
@@ -21,6 +20,8 @@ namespace GameLibrary.Models.Tiles.Special
             if (!Visited)
                 Visited = true;
             Console.WriteLine($"You entered a {GetType().Name} tile");
+            Console.WriteLine($"This is now your new respawn location.");
+            player.UpdateRespawn(Location);
         }
 
         /// <summary>

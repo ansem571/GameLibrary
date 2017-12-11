@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace GameLibrary.Interfaces
+﻿namespace GameLibrary.Interfaces
 {
     public interface IPlayer
     {
