@@ -3,8 +3,9 @@ using System;
 
 namespace GameLibrary.Models.Player
 {
-    public class PlayerStats : IStats
+    public class PlayerStats : IPlayerStats
     {
+        //IStats
         public int Level { get; set; } = 1;
         public int CurrentHealth { get; set; } = 100;
         public int MaxHealth { get; set; } = 100;
@@ -16,11 +17,30 @@ namespace GameLibrary.Models.Player
         public int M_Atk { get; set; } = 6;
         public int M_Def { get; set; } = 5;
         public int AttackSpeed { get; set; } = 10;
+        public int Gold { get; set; } = 0;
+
+        //IPlayerStats
         public int CurrentExp { get; set; } = 0;
         public int MaxExp { get; set; } = 100;
         public int Deaths { get; set; } = 0;
-        public int Gold { get; set; } = 0;
 
+        //IStats
+        public void DisplayStats(bool displayCombatStats = false)
+        {
+            Console.WriteLine($"Level: {Level}");
+            if (displayCombatStats)
+            {
+                Console.WriteLine($"HP: {CurrentHealth}/{MaxHealth}");
+                Console.WriteLine($"MP: {CurrentMana}/{MaxMana}");
+                Console.WriteLine($"Exp: {CurrentExp}/{MaxExp}");
+                Console.WriteLine($"P.Atk: {P_Atk}\tP.Def: {P_Def}");
+                Console.WriteLine($"M.Atk: {M_Atk}\tM.Def: {M_Def}");
+                Console.WriteLine($"Attack speed: {AttackSpeed}");
+            }
+            Console.WriteLine($"Deaths: {Deaths}\tGold: {Gold}");
+        }
+
+        //IPlayerStats
         public void LevelUp()
         {
             if (CurrentExp < MaxExp)
@@ -39,21 +59,6 @@ namespace GameLibrary.Models.Player
             MaxHealth = (int)Math.Ceiling(MaxHealth * formula);
             CurrentHealth = MaxHealth;
             AttackSpeed = Level % 10 == 0 ? AttackSpeed += 10 : AttackSpeed++;
-        }
-
-        public void DisplayStats(bool displayCombatStats = false)
-        {
-            Console.WriteLine($"Level: {Level}");
-            if (displayCombatStats)
-            {
-                Console.WriteLine($"HP: {CurrentHealth}/{MaxHealth}");
-                Console.WriteLine($"MP: {CurrentMana}/{MaxMana}");
-                Console.WriteLine($"Exp: {CurrentExp}/{MaxExp}");
-                Console.WriteLine($"P.Atk: {P_Atk}\tP.Def: {P_Def}");
-                Console.WriteLine($"M.Atk: {M_Atk}\tM.Def: {M_Def}");
-                Console.WriteLine($"Attack speed: {AttackSpeed}");
-            }
-            Console.WriteLine($"Deaths: {Deaths}\tGold: {Gold}");
         }
     }
 }

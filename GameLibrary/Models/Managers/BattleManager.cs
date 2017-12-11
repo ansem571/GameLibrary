@@ -7,10 +7,10 @@ namespace GameLibrary.Models.Managers
 {
     public class BattleManager : IBattleManager
     {
-        public Random Randomizer { get; }
+        private Random Randomizer { get; set; }
         private int randomizeInt = 100;
-        public Action Victory { get; set; }
-        public Action Defeat { get; set; }
+        private Action Victory;
+        private Action Defeat;
 
         public BattleManager()
         {
@@ -18,14 +18,11 @@ namespace GameLibrary.Models.Managers
             Randomizer = new Random(Randomizer.Next(randomizeInt));
         }
 
-        public void InitActions(Action win, Action lose)
+        public void Battle(IPlayer player, IEnemy enemy, Action victory, Action defeat)
         {
-            Victory = win;
-            Defeat = lose;
-        }
+            Victory = victory ?? throw new ArgumentNullException(nameof(victory));
+            Defeat = defeat ?? throw new ArgumentNullException(nameof(defeat));
 
-        public void Battle(IPlayer player, IEnemy enemy)
-        {
             while (true)
             {
                 try
@@ -33,16 +30,15 @@ namespace GameLibrary.Models.Managers
                     var enemyAttackChance = Randomizer.Next(randomizeInt) + 1;
                     bool enemyCanAttack = enemyAttackChance <= 90;
 
-                    var name = (enemy.IsBoss ? "Boss" : "") + enemy.Name + " " + enemy.GetType().Name;
+                    var name = (enemy.IsEnemyBoss() ? "Boss" : "") + enemy.GetType().Name;
 
                     Console.WriteLine($"You are battling {name}");
-                    enemy.Stats.DisplayStats(true);
+                    enemy.GetCurrentStats().DisplayStats(true);
                     Console.WriteLine();
 
                     player.PrintStats(true);
 
-                    var option = StaticHelperClass.ReadWriteOptions(new List<string> { "Attack w/out Magic", $"Attack w/ Magic({player.PlayerStats.ManaCost}MP)", "Charge Mana", "Retreat" });
-
+                    var option = StaticHelperClass.ReadWriteOptions(new List<string> { "Attack w/out Magic", $"Attack w/ Magic({player.GetCostOfSpell()}MP)", "Charge Mana", "Retreat" });
 
                     //The if conditional is if either side is defeated.
                     switch (option)
@@ -88,17 +84,17 @@ namespace GameLibrary.Models.Managers
 
         private bool Attack(IPlayer player, IEnemy enemy, bool useMagic, int enemyAttackChance, bool enemyCanAttack)
         {
-            if (player.PlayerStats.AttackSpeed >= enemy.Stats.AttackSpeed)
+            if (player.GetCurrentStats().AttackSpeed >= enemy.GetCurrentStats().AttackSpeed)
             {
                 player.Attack(useMagic, enemy);
-                if (enemy.Stats.CurrentHealth <= 0)
+                if (enemy.GetCurrentStats().CurrentHealth <= 0)
                 {
                     Victory();
                     return true;
                 }
                 if (enemyCanAttack)
                 {
-                    enemy.Attack(enemyAttackChance % 2 == 0 && enemy.Stats.CurrentMana >= enemy.Stats.ManaCost, player);
+                    enemy.Attack(enemyAttackChance % 2 == 0 && enemy.GetCurrentStats().CurrentMana >= enemy.GetCurrentStats().ManaCost, player);
                     if (player.IsDefeated(enemy))
                     {
                         Defeat();
@@ -108,14 +104,14 @@ namespace GameLibrary.Models.Managers
             }
             else
             {
-                enemy.Attack(enemyAttackChance % 2 == 0 && enemy.Stats.CurrentMana >= enemy.Stats.ManaCost, player);
+                enemy.Attack(enemyAttackChance % 2 == 0 && enemy.GetCurrentStats().CurrentMana >= enemy.GetCurrentStats().ManaCost, player);
                 if (player.IsDefeated(enemy))
                 {
                     Defeat();
                     return true;
                 }
                 player.Attack(useMagic, enemy);
-                if (enemy.Stats.CurrentHealth <= 0)
+                if (enemy.GetCurrentStats().CurrentHealth <= 0)
                 {
                     Victory();
                     return true;
@@ -126,12 +122,12 @@ namespace GameLibrary.Models.Managers
 
         private bool ChargeMana(IPlayer player, IEnemy enemy, int enemyAttackChance, bool enemyCanAttack)
         {
-            if (player.PlayerStats.AttackSpeed >= enemy.Stats.AttackSpeed)
+            if (player.GetCurrentStats().AttackSpeed >= enemy.GetCurrentStats().AttackSpeed)
             {
                 player.ChargeMana(enemy);
                 if (enemyCanAttack)
                 {
-                    enemy.Attack(enemyAttackChance % 2 == 0 && enemy.Stats.CurrentMana >= enemy.Stats.ManaCost, player);
+                    enemy.Attack(enemyAttackChance % 2 == 0 && enemy.GetCurrentStats().CurrentMana >= enemy.GetCurrentStats().ManaCost, player);
                     if (player.IsDefeated(enemy))
                     {
                         Defeat();
@@ -143,7 +139,7 @@ namespace GameLibrary.Models.Managers
             {
                 if (enemyCanAttack)
                 {
-                    enemy.Attack(enemyAttackChance % 2 == 0 && enemy.Stats.CurrentMana >= enemy.Stats.ManaCost, player);
+                    enemy.Attack(enemyAttackChance % 2 == 0 && enemy.GetCurrentStats().CurrentMana >= enemy.GetCurrentStats().ManaCost, player);
                     if (player.IsDefeated(enemy))
                     {
                         Defeat();

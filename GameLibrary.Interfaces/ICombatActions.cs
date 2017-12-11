@@ -2,8 +2,8 @@
 {
     public interface ICombatActions
     {
-        void Attack(params object[] args);
-        void ChargeMana(params object[] args);
+        void Attack(IStats attacker, IStats defender, bool useMagic);
+        void ChargeMana(IStats actorStats);
 
         bool IsDefeated(IStats stats);
     }

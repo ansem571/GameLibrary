@@ -4,14 +4,8 @@ namespace GameLibrary.Interfaces
 {
     public interface IPlayer
     {
-        string Name { get; }
-        Dictionary<string, int> MonsterCollection { get; }
-        IPoint CurrentLocation { get; }
-        IPoint RespawnLocation { get; }
-        IStats PlayerStats { get; }
-        ICharacterMovement Movement { get; }
-        ICombatActions CombatActions { get; }
-
+        string GetName();
+        IPoint GetCurrentLocation();
         void PerformMovement();
         void UpdateLocation(IPoint point);
         void UpdateRespawn(IPoint point);
@@ -19,9 +13,13 @@ namespace GameLibrary.Interfaces
         void Attack(bool useMagic, IEnemy enemy);
         void ChargeMana(IEnemy enemy);
         bool IsDefeated(IEnemy enemy);
+        //TODO: remove null once I add different types of damage
+        int GetCostOfSpell(string spellName = null);
+
+        IStats GetCurrentStats();
+        IPlayerStats GetAllCurrentStats();
 
         void OpenMonsterCollection();
-
         void PrintStats(bool displayCombatStats = false);
         void ResetHealthMana();
     }

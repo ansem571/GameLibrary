@@ -14,9 +14,9 @@ namespace GameLibrary.Models.Maps
 {
     public class GlobalMap : IMap
     {
-        public int Width { get; }
-        public int Height { get; }
-        public Dictionary<IPoint, ITile> Grid { get; } = new Dictionary<IPoint, ITile>();
+        private int Width;
+        private int Height;
+        private Dictionary<IPoint, ITile> Grid = new Dictionary<IPoint, ITile>();
         private string PathToMap { get; set; }
         private Process ImageProcess { get; set; }
 
@@ -24,13 +24,17 @@ namespace GameLibrary.Models.Maps
         {
             Width = w;
             Height = h;
-            PathToMap = !string.IsNullOrEmpty(path) ? path : throw new Exception("No path provided");
+            PathToMap = path ?? throw new ArgumentNullException(nameof(path), "No path provided");
 
             SetupGrid(tiles);
         }
 
         private void SetupGrid(List<List<ITile>> tiles)
         {
+            if (tiles == null)
+                throw new ArgumentNullException(nameof(tiles));
+            if (!tiles.Any())
+                throw new ArgumentException("Tiles collection is empty", nameof(tiles));
             foreach (var tileGroup in tiles)
             {
                 foreach (var tile in tileGroup)
@@ -170,6 +174,26 @@ namespace GameLibrary.Models.Maps
                 }
             }
             return data.ToArray();
+        }
+
+        public float GetWidth()
+        {
+            return Width;
+        }
+
+        public float GetHeight()
+        {
+            return Height;
+        }
+
+        public Dictionary<IPoint, ITile> GetMapGrid()
+        {
+            return Grid;
+        }
+
+        public ITile GetTileByLocation(IPoint point)
+        {
+            return Grid[point];
         }
 
         /// <summary>

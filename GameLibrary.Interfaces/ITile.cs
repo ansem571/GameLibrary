@@ -6,7 +6,7 @@
         IPoint Location { get; }
         bool Visited { get; set; }
 
-        void EnteredTile(IPlayer player, params object[] args);
-        object[] GetAppropriateParams(params object[] args);
+        void EnteredTile(IPlayer player);
+        void SetupParamsForTile(IPlayer player);
     }
 }

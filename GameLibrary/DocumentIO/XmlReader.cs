@@ -4,8 +4,10 @@ using GameLibrary.Interfaces;
 using GameLibrary.Models;
 using GameLibrary.Models.Tiles.Special;
 using GameLibrary.Models.Tiles.Terrain;
+using GameLibrary.Models.VictoryConditions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 
 namespace GameLibrary.DocumentIO
@@ -19,8 +21,19 @@ namespace GameLibrary.DocumentIO
         public int Height { get; private set; }
 
         public List<List<ITile>> Tiles { get; private set; } = new List<List<ITile>>();
+
+        private IBattleManager _battleManager;
+
+        public XmlReader(IBattleManager battleManager)
+        {
+            _battleManager = battleManager ?? throw new ArgumentNullException(nameof(battleManager));
+        }
+
         public void ReadDocument(string path)
         {
+            if (path == null)
+                throw new ArgumentNullException(nameof(path));
+
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load(path);
             var child = xmlDoc.FirstChild.FirstChild;
@@ -43,12 +56,77 @@ namespace GameLibrary.DocumentIO
             Tiles.Add(GetTiles(TileTypeEnum.Dungeon, xmlDoc.GetElementsByTagName("Dungeon_Tiles").Item(0).ChildNodes));
             Tiles.Add(GetTiles(TileTypeEnum.POI, xmlDoc.GetElementsByTagName("POI_Tiles").Item(0).ChildNodes));
 
+            if (Tiles.Any(x => x == null))
+                throw new NullReferenceException(nameof(Tiles) + " has a null reference.");
+
         }
 
-        private static List<ITile> GetTiles(TileTypeEnum tileType, XmlNodeList tiles)
+        private List<ITile> GetTiles(TileTypeEnum tileType, XmlNodeList tiles)
         {
-            List<ITile> list;
-            Type typeOfTile;
+            GetTileType(tileType, out List<ITile> list, out Type typeOfTile);
+            try
+            {
+                //Follows schema of Location, RegionId, Visited, Cleared (Dungeon only)
+                foreach (XmlNode tile in tiles)
+                {
+                    var locationNode = tile.FirstChild;
+                    if (locationNode == null)
+                    {
+                        Console.WriteLine($"Invalid location node: {tile.ParentNode.Name}");
+                        continue;
+                    }
+                    var x = Convert.ToInt32(locationNode.FirstChild.InnerXml);
+                    var y = Convert.ToInt32(locationNode.LastChild.InnerXml);
+                    IPoint location = new Point2D(x, y);
+
+                    var regionNode = locationNode.NextSibling;
+                    if (regionNode == null)
+                    {
+                        Console.WriteLine($"Invalid regionID node: {tile}");
+                        continue;
+                    }
+                    var region = regionNode.InnerXml;
+
+                    var visitedNode = regionNode.NextSibling;
+                    var visited = visitedNode != null ? Convert.ToBoolean(visitedNode.InnerXml) : false;
+
+                    var tileParams = new List<object>
+                    {
+                        location,
+                        region,
+                        visited
+                    };
+
+                    if (typeOfTile == typeof(DungeonTile))
+                    {
+                        var clearedNode = visitedNode.NextSibling;
+                        if (clearedNode != null)
+                            tileParams.Add(Convert.ToBoolean(clearedNode.InnerXml));
+                        else
+                            tileParams.Add(false);
+                        //TODO: Add as field in xml doc
+                        var numOfEnemies = 3;
+                        tileParams.Add(numOfEnemies);
+                    }
+                    if (typeOfTile == typeof(EnemyTile) || typeOfTile == typeof(DungeonTile))
+                    {
+                        tileParams.Add(_battleManager);
+                    }
+
+                    var newTile = (ITile)Activator.CreateInstance(typeOfTile, tileParams.ToArray());
+                    list.Add(newTile);
+                }
+                return list;
+            }
+            catch (Exception e)
+            {
+                StaticHelperClass.PrintException(e, 3);
+            }
+            return null;
+        }
+
+        private static void GetTileType(TileTypeEnum tileType, out List<ITile> list, out Type typeOfTile)
+        {
             switch (tileType)
             {
                 case TileTypeEnum.Enemy:
@@ -113,55 +191,8 @@ namespace GameLibrary.DocumentIO
                     }
                     break;
             }
-            try
-            {
-                //Follows schema of Location, RegionId, Visited, Cleared (Dungeon only)
-                foreach (XmlNode tile in tiles)
-                {
-                    var locationNode = tile.FirstChild;
-                    if (locationNode == null)
-                    {
-                        Console.WriteLine($"Invalid location node: {tile.ParentNode.Name}");
-                        continue;
-                    }
-                    var x = Convert.ToInt32(locationNode.FirstChild.InnerXml);
-                    var y = Convert.ToInt32(locationNode.LastChild.InnerXml);
-                    IPoint location = new Point2D(x, y);
-
-                    var regionNode = locationNode.NextSibling;
-                    if (regionNode == null)
-                    {
-                        Console.WriteLine($"Invalid regionID node: {tile}");
-                        continue;
-                    }
-                    var region = regionNode.InnerXml;
-
-                    var visitedNode = regionNode.NextSibling;
-                    var visited = visitedNode != null ? Convert.ToBoolean(visitedNode.InnerXml) : false;          
-
-                    var tileParams = new List<object>
-                    {
-                        location,
-                        region,
-                        visited
-                    };
-
-                    var clearedNode = visitedNode.NextSibling;
-                    if(clearedNode != null)
-                    {
-                        tileParams.Add(Convert.ToBoolean(clearedNode.InnerXml));
-                    }
-
-                    var newTile = (ITile)Activator.CreateInstance(typeOfTile, tileParams.ToArray());
-                    list.Add(newTile);
-                }
-
-            }
-            catch (Exception e)
-            {
-                StaticHelperClass.PrintException(e, 3);
-            }
-            return list;
         }
+
+
     }
 }

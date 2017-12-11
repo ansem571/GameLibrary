@@ -6,10 +6,10 @@ namespace GameLibrary.Models.Enemies.Orc
 {
     public class Orc : IEnemy
     {
-        public bool IsBoss { get; } = false;
-        public string Name { get; }
-        public IStats Stats { get; }
-        public ICombatActions CombatActions { get; }
+        private bool _isBoss { get; } = false;
+        private string _name { get; }
+        private IStats _stats { get; }
+        private ICombatActions _combatActions { get; }
 
         public Orc(bool isBoss = false) : this("Orc", new OrcStats(), new CombatActions(), isBoss) { }
 
@@ -17,31 +17,41 @@ namespace GameLibrary.Models.Enemies.Orc
 
         public Orc(string name, IStats stats, ICombatActions actions, bool isBoss = false)
         {
-            Name = name;
-            Stats = stats;
-            CombatActions = actions;
-            IsBoss = isBoss;
+            _name = name;
+            _stats = stats ?? throw new ArgumentNullException(nameof(stats));
+            _combatActions = actions ?? throw new ArgumentNullException(nameof(actions));
+            _isBoss = isBoss;
         }
 
         public void Attack(bool useMagic, IPlayer player)
         {
-            CombatActions.Attack(new object[] { useMagic, this, player, ActorEnum.Enemy });
+            _combatActions.Attack(_stats, player.GetCurrentStats(), useMagic);
         }
-        public void ChargeMana(IPlayer player)
+        public void ChargeMana()
         {
-            CombatActions.ChargeMana(new object[] { this, player, ActorEnum.Enemy });
+            _combatActions.ChargeMana(_stats);
+        }
+
+        public bool IsEnemyBoss()
+        {
+            return _isBoss;
         }
 
         public bool IsDefeated(IPlayer player)
         {
-            var defeated = CombatActions.IsDefeated(Stats);
+            var defeated = _combatActions.IsDefeated(_stats);
             if (!defeated)
                 return false;
-            Stats.CurrentHealth = 0;
-            var name = (IsBoss ? "Boss" : "") + Name + " " + GetType().Name;
+            _stats.CurrentHealth = 0;
+            var name = (_isBoss ? "Boss" : "") + _name + " " + GetType().Name;
             Console.WriteLine($"You have defeated {name}");
-            //Perform death stuff here
+            //Perform other death stuff here
             return true;
+        }
+
+        public IStats GetCurrentStats()
+        {
+            return _stats;
         }
     }
 }

@@ -16,21 +16,6 @@ namespace GameLibrary.Models.Tiles.Terrain
             Visited = visited;
         }
 
-        public void EnteredTile(IPlayer player, params object[] args)
-        {
-            IEnemy enemy = null;
-            IBattleManager battleManager = null;
-            foreach(var arg in args)
-            {
-                if (arg is IEnemy)
-                    enemy = (IEnemy)arg;
-                else if (arg is IBattleManager)
-                    battleManager = (IBattleManager)arg;
-            }
-
-            EnteredTile(player);
-
-        }
         public void EnteredTile(IPlayer player)
         {
             if (!Visited)
@@ -38,11 +23,10 @@ namespace GameLibrary.Models.Tiles.Terrain
             Console.WriteLine($"You entered a {GetType().Name} tile");
         }
 
-        public object[] GetAppropriateParams(params object[] args)
-        {
-            List<object> list = new List<object>();
-
-            return list.ToArray();
-        }
+        /// <summary>
+        /// Unused
+        /// </summary>
+        /// <param name="player"></param>
+        public void SetupParamsForTile(IPlayer player) { }
     }
 }

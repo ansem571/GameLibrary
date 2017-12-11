@@ -6,9 +6,8 @@ namespace GameLibrary.Interfaces
 {
     public interface IVictoryCondition
     {
-        bool VictoryAchieved { get; }
-        void VictoryConditionAchieved(params object[] args);
+        bool VictoryConditionAchieved();
 
-        void DisplayVictoryMessage(params object[] args);
+        void DisplayVictoryMessage();
     }
 }

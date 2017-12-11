@@ -4,9 +4,12 @@ using GameLibrary.Models;
 using GameLibrary.Models.Managers;
 using GameLibrary.Models.Maps;
 using GameLibrary.Models.Player;
+using GameLibrary.Models.Tiles.Special;
 using GameLibrary.Models.VictoryConditions;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace CharacterConsole
@@ -22,22 +25,36 @@ namespace CharacterConsole
             dir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)+"\\"; 
             var mapPath = dir + $"map.png";
 
-            IReader reader = new XmlReader();
+            IBattleManager battleManager = new BattleManager();
+
+            IReader reader = new XmlReader(battleManager);
+
             reader.ReadDocument(xmlDocPath);
-
-            IMap map = new GlobalMap(reader.Width, reader.Height, mapPath, reader.Tiles);
-
-            IVictoryCondition victoryCondition = new DungeonVictoryCondition(map);
 
             IPlayer player = SetupPlayer(reader.Width, reader.Height);
 
-            map.Grid[player.CurrentLocation].Visited = true;
+            IMap map = new GlobalMap(reader.Width, reader.Height, mapPath, reader.Tiles);
 
-            IBattleManager battleManager = new BattleManager();
+            var dungeons = GetDungeonTiles(map.GetMapGrid());
 
-            IGameManager game = new GameManager(map, victoryCondition, player, battleManager);
+            IVictoryCondition victoryCondition = new DungeonVictoryCondition(map, player, dungeons);
+
+            map.GetTileByLocation(player.GetCurrentLocation()).Visited = true;
+
+            IGameManager game = new GameManager(map, victoryCondition, player);
 
             game.Play();
+        }
+
+        private static List<DungeonTile> GetDungeonTiles(Dictionary<IPoint, ITile> map)
+        {
+            List<DungeonTile> dungeons = new List<DungeonTile>();
+            foreach(var tile in map)
+            {
+                if (tile.Value is DungeonTile)
+                    dungeons.Add((DungeonTile)tile.Value);
+            }
+            return dungeons;
         }
 
         private static string GetParent(string path)
@@ -50,8 +67,8 @@ namespace CharacterConsole
             string name = "Ansem571";
             IPoint spawn = new Point2D(5, 0);
             IPoint respawn = new Point2D(5, 0);
-            IStats stats = new PlayerStats();
-            ICharacterMovement movement = new PlayerMovement(w, h);
+            IPlayerStats stats = new PlayerStats();
+            ICharacterMovement movement = new PlayerMovement(w, h, spawn, respawn);
             ICombatActions combat = new CombatActions();
 
             IPlayer player = new Player(name, spawn, respawn, stats, movement, combat);

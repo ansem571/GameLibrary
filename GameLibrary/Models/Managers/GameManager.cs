@@ -9,34 +9,30 @@ namespace GameLibrary.Models.Managers
 {
     public class GameManager : IGameManager
     {
-        public IMap Map { get; }
-        public IVictoryCondition VictoryCondition { get; }
-        public IPlayer Player { get; }
-        public IBattleManager BattleManager { get; }
-        public string ConfigPath { get; }
+        private IMap Map;
+        private IVictoryCondition VictoryCondition;
+        private IPlayer Player;
+        private string ConfigPath;
 
-        private string EnemyAssemblyNamespace { get; }
-        private int NumOfDungeonEnemies { get; }
+        private int NumOfDungeonEnemies;
 
-        public GameManager(IMap map, IVictoryCondition victoryCondition, IPlayer player, IBattleManager battleManager, int numOfDungeonEnemies = 3, string assemblyName = "GameLibrary.Models.Enemies.", string configPath = null)
+        public GameManager(IMap map, IVictoryCondition victoryCondition, IPlayer player, int numOfDungeonEnemies = 3, string configPath = null)
         {
             Map = map ?? throw new ArgumentNullException(nameof(map));
             VictoryCondition = victoryCondition ?? throw new ArgumentNullException(nameof(victoryCondition));
             Player = player ?? throw new ArgumentNullException(nameof(player));
-            BattleManager = battleManager ?? throw new ArgumentNullException(nameof(player));
             NumOfDungeonEnemies = numOfDungeonEnemies;
 
-            EnemyAssemblyNamespace = assemblyName;
             ConfigPath = configPath;
         }
 
         public void Play()
         {
-            var loc = Player.CurrentLocation;
+            var loc = Player.GetCurrentLocation();
             Map.OpenMap(loc);
-            while (!VictoryCondition.VictoryAchieved)
+            while (!VictoryCondition.VictoryConditionAchieved())
             {
-                loc = Player.CurrentLocation;
+                loc = Player.GetCurrentLocation();
                 Player.PrintStats(true);
                 try
                 {
@@ -70,14 +66,14 @@ namespace GameLibrary.Models.Managers
                             }
                             break;
                     }
-                    VictoryCondition.VictoryConditionAchieved(Player, Map);
+                    VictoryCondition.VictoryConditionAchieved();
                 }
                 catch (Exception e)
                 {
                     StaticHelperClass.PrintException(e, 1);
                 }
             }
-            VictoryCondition.DisplayVictoryMessage(Player, Map);
+            VictoryCondition.DisplayVictoryMessage();
             Quit();
         }
         public void Save()
@@ -86,7 +82,7 @@ namespace GameLibrary.Models.Managers
         }
         public void Quit()
         {
-            Map.CloseMap(Player.CurrentLocation);
+            Map.CloseMap(Player.GetCurrentLocation());
             Console.WriteLine("Good bye");
 
             Thread.Sleep(1000);
@@ -109,21 +105,14 @@ namespace GameLibrary.Models.Managers
 
         private void UpdateMap()
         {
-            var newLoc = Player.CurrentLocation;
-            var tile = Map.Grid[newLoc];
+            var newLoc = Player.GetCurrentLocation();
+            var tile = Map.GetTileByLocation(newLoc);
 
-            object[] list = GetTileByTile(tile);
+            tile.SetupParamsForTile(Player);
 
-            tile.EnteredTile(Player, list);
-            newLoc = Player.CurrentLocation;
+            tile.EnteredTile(Player);
+            newLoc = Player.GetCurrentLocation();
             Map.RedrawMap(newLoc);
-        }
-
-        private object[] GetTileByTile(ITile tile)
-        {
-            var list = tile.GetAppropriateParams(Player, BattleManager, EnemyAssemblyNamespace, NumOfDungeonEnemies);
-
-            return list.ToArray();
         }
 
         private void Rest()

@@ -2,14 +2,11 @@
 {
     public interface IEnemy
     {
-        bool IsBoss { get; }
-        string Name { get; }
-        IStats Stats { get; }
-        ICombatActions CombatActions { get; }
-
         void Attack(bool useMagic, IPlayer player);
-        void ChargeMana(IPlayer player);
+
+        bool IsEnemyBoss();
 
         bool IsDefeated(IPlayer player);
+        IStats GetCurrentStats();
     }
 }

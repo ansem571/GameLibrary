@@ -7,61 +7,92 @@ namespace GameLibrary.Models.Player
 {
     public class Player : IPlayer
     {
-        public string Name { get; private set; }
-        public IPoint CurrentLocation { get; private set; }
-        public IPoint RespawnLocation { get; private set; }
-        public IStats PlayerStats { get; private set; }
-        public ICharacterMovement Movement { get; private set; }
-        public ICombatActions CombatActions { get; private set; }
+        private string _name;
+        private IPoint _location;
+        private IPoint _respawn;
+        private IPlayerStats _playerStats;
+        private ICharacterMovement _movement;
+        private ICombatActions _combatActions;
         /// <summary>
         /// The idea is (Enemy name, Times killed)
         /// </summary>
-        public Dictionary<string, int> MonsterCollection { get; private set; } = new Dictionary<string, int>();
+        private Dictionary<string, int> MonsterCollection = new Dictionary<string, int>();
 
 
-        public Player(string name, IPoint loc, IPoint respawn, IStats playerStats, ICharacterMovement movement, ICombatActions combatActions, Dictionary<string, int> monsters = null)
+        public Player(string name, IPoint loc, IPoint respawn, IPlayerStats playerStats, ICharacterMovement movement, ICombatActions combatActions, Dictionary<string, int> monsters = null)
         {
-            Name = name;
-            CurrentLocation = loc;
-            RespawnLocation = respawn;
-            PlayerStats = playerStats;
-            Movement = movement;
-            CombatActions = combatActions;
+            _name = name;
+            _location = loc ?? throw new ArgumentNullException(nameof(loc));
+            _respawn = respawn ?? throw new ArgumentNullException(nameof(respawn));
+            _playerStats = playerStats ?? throw new ArgumentNullException(nameof(playerStats));
+            _movement = movement ?? throw new ArgumentNullException(nameof(movement));
+            _combatActions = combatActions ?? throw new ArgumentNullException(nameof(combatActions));
             if (monsters != null)
                 MonsterCollection = monsters;
         }
 
+        public string GetName()
+        {
+            return _name;
+        }
+
+        public IPoint GetCurrentLocation()
+        {
+            return _location;
+        }
+
         public void PerformMovement()
         {
-            Movement.PerformMovement(CurrentLocation);
+            _movement.PerformMovement();
             Console.Clear();
         }
         public void UpdateLocation(IPoint point)
         {
-            CurrentLocation = point;
+            _location = point;
         }
         public void UpdateRespawn(IPoint point)
         {
-            RespawnLocation = point;
+            _respawn = point;
         }
         public void Attack(bool useMagic, IEnemy enemy)
         {            
-            CombatActions.Attack(new object[] { useMagic, this, enemy, ActorEnum.Player });
+            _combatActions.Attack(_playerStats, enemy.GetCurrentStats(), useMagic);
 
-            CalculateExp(useMagic ? PlayerStats.M_Atk : PlayerStats.P_Atk, enemy);
+            CalculateExp(useMagic ? _playerStats.M_Atk : _playerStats.P_Atk, enemy);
         }
         public void ChargeMana(IEnemy enemy)
         {
-            CombatActions.ChargeMana(new object[] { this, enemy, ActorEnum.Player });
+            _combatActions.ChargeMana(GetCurrentStats());
         }
         public bool IsDefeated(IEnemy enemy)
         {
-            var defeated = CombatActions.IsDefeated(PlayerStats);
+            var defeated = _combatActions.IsDefeated(_playerStats);
             if (!defeated)
                 return false;
 
             //Perform death stuff here
             return true;
+        }
+
+        public int GetCostOfSpell(string spellName = null)
+        {
+            return _playerStats.ManaCost;
+        }
+        /// <summary>
+        /// Returns only IStats portion, for all player stats use 'GetAllCurrentStats'
+        /// </summary>
+        /// <returns></returns>
+        public IStats GetCurrentStats()
+        {
+            return _playerStats;
+        }
+        /// <summary>
+        /// Returns all player stats
+        /// </summary>
+        /// <returns></returns>
+        public IPlayerStats GetAllCurrentStats()
+        {        
+            return _playerStats;
         }
 
         public void OpenMonsterCollection()
@@ -74,35 +105,35 @@ namespace GameLibrary.Models.Player
         public void PrintStats(bool displayCombatStats = false)
         {
             Console.WriteLine("Player stats");
-            Console.WriteLine($"Name: {Name}");
-            Console.WriteLine($"Current location: {CurrentLocation}");
-            PlayerStats.DisplayStats(displayCombatStats);
+            Console.WriteLine($"Name: {_name}");
+            Console.WriteLine($"Current location: {_location}");
+            _playerStats.DisplayStats(displayCombatStats);
         }
         public void ResetHealthMana()
         {
-            PlayerStats.CurrentHealth = PlayerStats.MaxHealth;
-            PlayerStats.CurrentMana = PlayerStats.MaxMana;
+            _playerStats.CurrentHealth = _playerStats.MaxHealth;
+            _playerStats.CurrentMana = _playerStats.MaxMana;
         }
 
         private void CalculateExp(int statToUse, IEnemy enemy)
         {
             float formula = statToUse;
-            PlayerStats.CurrentExp += Convert.ToInt32(formula);
+            _playerStats.CurrentExp += Convert.ToInt32(formula);
 
             if (enemy.IsDefeated(this))
             {
                 AddToMonsterCollection(enemy);                
-                var expFormula = PlayerStats.Level >= enemy.Stats.Level ?
-                    GetDefeatedExp(enemy.Stats.Level, PlayerStats.Level) :
-                    GetDefeatedExp(PlayerStats.Level, enemy.Stats.Level) / 10;
+                var expFormula = _playerStats.Level >= enemy.GetCurrentStats().Level ?
+                    GetDefeatedExp(enemy.GetCurrentStats().Level, _playerStats.Level) :
+                    GetDefeatedExp(_playerStats.Level, enemy.GetCurrentStats().Level) / 10;
 
-                PlayerStats.CurrentExp += expFormula;
-                PlayerStats.Gold += enemy.Stats.Gold;
+                _playerStats.CurrentExp += expFormula;
+                _playerStats.Gold += enemy.GetCurrentStats().Gold;
             }
 
-            while(PlayerStats.CurrentExp >= PlayerStats.MaxExp)
+            while(_playerStats.CurrentExp >= _playerStats.MaxExp)
             {
-                PlayerStats.LevelUp();
+                _playerStats.LevelUp();
             }
         }
         private int GetDefeatedExp(int num1, int num2)
@@ -114,9 +145,9 @@ namespace GameLibrary.Models.Player
             Console.WriteLine("YOU DIED");
 
             ResetHealthMana();
-            PlayerStats.CurrentExp = 0;
-            PlayerStats.Deaths++;
-            Movement.ResetPlayerToRespawn(CurrentLocation, RespawnLocation);
+            _playerStats.CurrentExp = 0;
+            _playerStats.Deaths++;
+            _movement.ResetPlayerToRespawn();
         }
         private void AddToMonsterCollection(IEnemy enemy)
         {

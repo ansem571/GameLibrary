@@ -13,12 +13,8 @@
         int M_Atk { get; set; }
         int M_Def { get; set; }
         int AttackSpeed { get; set; }
-        int CurrentExp { get; set; }
-        int MaxExp { get; set; }
-        int Deaths { get; set; }
         int Gold { get; set; }
 
-        void LevelUp();
         void DisplayStats(bool displayCombatStats = false);
     }
 }

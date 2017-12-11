@@ -97,12 +97,12 @@ C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\bin\
 C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\bin\Debug\System.Xml.XmlSerializer.dll
 C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\bin\Debug\System.Xml.XPath.dll
 C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\bin\Debug\System.Xml.XPath.XDocument.dll
+C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\bin\Debug\GameLibrary.dll
+C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\bin\Debug\GameLibrary.Interfaces.dll
+C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\bin\Debug\GameLibrary.Interfaces.pdb
+C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\bin\Debug\GameLibrary.pdb
 C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\obj\Debug\CharacterConsole.csprojResolveAssemblyReference.cache
 C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\obj\Debug\CharacterConsole.csproj.CharacterConsole.exe.config
 C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\obj\Debug\CharacterConsole.csproj.CoreCompileInputs.cache
 C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\obj\Debug\CharacterConsole.exe
 C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\obj\Debug\CharacterConsole.pdb
-C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\bin\Debug\GameLibrary.dll
-C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\bin\Debug\GameLibrary.Interfaces.dll
-C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\bin\Debug\GameLibrary.Interfaces.pdb
-C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\bin\Debug\GameLibrary.pdb

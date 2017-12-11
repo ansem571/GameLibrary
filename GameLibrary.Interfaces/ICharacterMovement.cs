@@ -2,10 +2,7 @@
 {
     public interface ICharacterMovement
     {
-        float MaxWidth { get; }
-        float MaxHeight { get; }
-
-        void ResetPlayerToRespawn(IPoint loc, IPoint respawn);
-        void PerformMovement(IPoint loc);
+        void ResetPlayerToRespawn();
+        void PerformMovement();
     }
 }

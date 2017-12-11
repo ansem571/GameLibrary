@@ -18,12 +18,6 @@ namespace GameLibrary.Models.Enemies.Orc
         public int AttackSpeed { get; set; } = 3;
         public int Gold { get; set; } = 20;
 
-
-        //Do not need these for enemies
-        public int Deaths { get; set; }
-        public int CurrentExp { get; set; }
-        public int MaxExp { get; set; }
-
         public OrcStats()
         {
             if (Level != 1)
@@ -40,11 +34,6 @@ namespace GameLibrary.Models.Enemies.Orc
                 AttackSpeed *= 1 + (Level / 3);
                 Gold *= Level;
             }
-        }
-
-        public void LevelUp()
-        {
-            throw new NotImplementedException();
         }
 
         public void DisplayStats(bool displayCombatStats)

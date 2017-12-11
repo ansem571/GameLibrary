@@ -15,70 +15,39 @@ namespace GameLibrary.Models.Tiles.Special
         public IPoint Location { get; }
         public bool Visited { get; set; } = false;
 
-        private bool Victory;
-        public EnemyTile(IPoint loc, string regionId, bool visited = false)
+        private IBattleManager _battleManager;
+        private readonly string _enemyAssemblyName = "GameLibrary.Models.Enemies.";
+        private IEnemy _enemy;
+
+        public EnemyTile(IPoint loc, string regionId, bool visited, IBattleManager battleManager)
         {
             Location = loc;
             RegionId = regionId;
             Visited = visited;
+            _battleManager = battleManager;
         }
 
-        public void EnteredTile(IPlayer player, params object[] args)
-        {
-            IEnemy enemy = null;
-            IBattleManager battleManager = null;
-            foreach (var arg in args)
-            {
-                if (arg is IEnemy)
-                    enemy = (IEnemy)arg;
-                else if (arg is IBattleManager)
-                    battleManager = (IBattleManager)arg;
-            }
-
-            EnteredTile(player, enemy ?? throw new Exception("Enemy not initialized"), battleManager ?? throw new Exception("Battle Manager not initialized"));
-
-        }
-        public void EnteredTile(IPlayer player, IEnemy enemy, IBattleManager battleManager)
+        public void EnteredTile(IPlayer player)
         {
             if (!Visited)
                 Visited = true;
             Console.WriteLine($"You entered a {GetType().Name}");
+            var Victory = false;
+
             Action victory = () => Victory = true;
             Action defeat = () => Victory = false;
 
-            battleManager.InitActions(victory, defeat);
-
-            battleManager.Battle(player, enemy);
-
-            player.ResetHealthMana();
+            _battleManager.Battle(player, _enemy, victory, defeat);
+            if (Victory)
+                player.ResetHealthMana();
             StaticHelperClass.PrintException(null, 3);
         }
 
-        public object[] GetAppropriateParams(params object[] args)
+        public void SetupParamsForTile(IPlayer player)
         {
-            List<object> list = new List<object>();
-            IPlayer player = null;
-            IBattleManager battleManager = null;
-            string assemblyName = null;
+            Type type = GetEnemyType(_enemyAssemblyName);
 
-            foreach (var arg in args)
-            {
-                if (arg is IPlayer && player == null)
-                    player = (IPlayer)arg;
-                if (arg is string && assemblyName == null)
-                    assemblyName = (string)arg;
-                if (arg is IBattleManager && battleManager == null)
-                    battleManager = (IBattleManager)arg;
-            }
-
-            Type type = GetEnemyType(assemblyName);
-
-            IEnemy enemy = (IEnemy)Activator.CreateInstance(type, new object[] { 1 + (player.PlayerStats.Level / 3), false });
-
-            list.Add(enemy);
-            list.Add(battleManager ?? new BattleManager());
-
-            return list.ToArray();
+            _enemy = (IEnemy)Activator.CreateInstance(type, new object[] { 1 + (player.GetCurrentStats().Level / 3), false });
         }
 
         private static Type GetEnemyType(string assemblyName)

@@ -6,20 +6,24 @@ namespace GameLibrary.Models.Player
 {
     public class PlayerMovement : ICharacterMovement
     {
-        public float MaxWidth { get; private set; }
-        public float MaxHeight { get; private set; }
+        private float MaxWidth { get; set; }
+        private float MaxHeight { get; set; }
+        private IPoint CurrentLoc { get; set; }
+        private IPoint RespawnLoc { get; set; }
 
-        public PlayerMovement(float w, float h)
+        public PlayerMovement(float w, float h, IPoint loc, IPoint respawn)
         {
             MaxWidth = w;
             MaxHeight = h;
+            CurrentLoc = loc ?? throw new ArgumentNullException(nameof(loc));
+            RespawnLoc = respawn ?? throw new ArgumentNullException(nameof(respawn));
         }
 
-        public void ResetPlayerToRespawn(IPoint loc, IPoint respawn)
+        public void ResetPlayerToRespawn()
         {
-            loc = respawn;
+            CurrentLoc = RespawnLoc;
         }
-        public void PerformMovement(IPoint loc)
+        public void PerformMovement()
         {
             while (true)
             {
@@ -34,26 +38,26 @@ namespace GameLibrary.Models.Player
                     {
                         case 1:
                             {
-                                if (loc.Y < MaxHeight - 1)
-                                    loc.Y++;
+                                if (CurrentLoc.Y < MaxHeight - 1)
+                                    CurrentLoc.Y++;
                             }
                             break;
                         case 2:
                             {
-                                if (loc.Y > 0)
-                                    loc.Y--;
+                                if (CurrentLoc.Y > 0)
+                                    CurrentLoc.Y--;
                             }
                             break;
                         case 3:
                             {
-                                if (loc.X > 0)
-                                    loc.X--;
+                                if (CurrentLoc.X > 0)
+                                    CurrentLoc.X--;
                             }
                             break;
                         case 4:
                             {
-                                if (loc.X < MaxWidth - 1)
-                                    loc.X++;
+                                if (CurrentLoc.X < MaxWidth - 1)
+                                    CurrentLoc.X++;
                             }
                             break;
                         default:

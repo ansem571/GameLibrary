@@ -11,41 +11,28 @@ namespace GameLibrary.Models.VictoryConditions
 {
     public class DungeonVictoryCondition : IVictoryCondition
     {
-        public bool VictoryAchieved { get; private set; }
         private IMap _map { get; }
         private List<DungeonTile> Dungeons = new List<DungeonTile>();
-        public DungeonVictoryCondition(IMap map)
+        private IPlayer _player { get; }
+        public DungeonVictoryCondition(IMap map, IPlayer player, List<DungeonTile> dungeons)
         {
             _map = map ?? throw new ArgumentNullException(nameof(map));
-
-            foreach (var keyValuePair in _map.Grid)
-            {
-                if (keyValuePair.Value is DungeonTile)
-                {
-                    Dungeons.Add((DungeonTile)keyValuePair.Value);
-                }
-            }
+            _player = player ?? throw new ArgumentNullException(nameof(_player));
+            Dungeons = dungeons ?? throw new ArgumentException($"{nameof(dungeons)} is null", nameof(dungeons));
+            if(!Dungeons.Any())
+                throw new ArgumentException($"{nameof(dungeons)} is empty", nameof(dungeons));
         }
-        public void VictoryConditionAchieved(params object[] args)
+        public bool VictoryConditionAchieved()
         {
-            if (Dungeons.All(x => x.Cleared))
-                VictoryAchieved = true;
+            return Dungeons.All(x => x.Cleared);
         }
 
-        public void DisplayVictoryMessage(params object[] args)
+        public void DisplayVictoryMessage()
         {
-            IPlayer player = null;
-            foreach(var arg in args)
-            {
-                if (arg is IPlayer)
-                    player = (IPlayer)arg;
-            }
-
-            Console.WriteLine($"Congratulations {player.Name}, You are victories in clearing all the dungeons on the {nameof(_map)}");
+            Console.WriteLine($"Congratulations {_player.GetName()}, You are victories in clearing all the dungeons on the {nameof(_map)}");
             Console.WriteLine("We will be adding more content in future patches. Stay tuned.");
             Thread.Sleep(3000);
             Console.WriteLine();
-
         }
     }
 }

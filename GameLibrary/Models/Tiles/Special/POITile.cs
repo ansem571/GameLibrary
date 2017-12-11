@@ -36,22 +36,21 @@ namespace GameLibrary.Models.Tiles.Special
             Console.WriteLine($"You entered a {GetType().Name} tile");
             if (!Visited)
             {
-                var gainedExp = 100 * player.PlayerStats.Level;
-                player.PlayerStats.CurrentExp += gainedExp;
+                var gainedExp = 100 * player.GetCurrentStats().Level;
+                player.GetAllCurrentStats().CurrentExp += gainedExp;
                 Console.WriteLine($"You have gained {gainedExp} experience points.\r\n");
-                while(player.PlayerStats.CurrentExp >= player.PlayerStats.MaxExp)
+                while(player.GetAllCurrentStats().CurrentExp >= player.GetAllCurrentStats().MaxExp)
                 {
-                    player.PlayerStats.LevelUp();
+                    player.GetAllCurrentStats().LevelUp();
                 }                
                 Visited = true;
             }
         }
 
-        public object[] GetAppropriateParams(params object[] args)
-        {
-            List<object> list = new List<object>();
-
-            return list.ToArray();
-        }
+        /// <summary>
+        /// Unused
+        /// </summary>
+        /// <param name="player"></param>
+        public void SetupParamsForTile(IPlayer player) { }
     }
 }

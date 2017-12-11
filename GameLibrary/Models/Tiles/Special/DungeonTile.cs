@@ -14,34 +14,24 @@ namespace GameLibrary.Models.Tiles.Special
         public bool Visited { get; set; } = false;
         public bool Cleared { get; set; } = false;
 
-        private bool Victory;
-        public DungeonTile(IPoint loc, string regionId, bool visited = false, bool cleared = false)
+        private bool _victory = false;
+        private IBattleManager _battleManager;
+        private readonly string _enemyAssemblyName = "GameLibrary.Models.Enemies.";
+        private List<IEnemy> _enemies;
+        private int _numOfEnemies;
+
+        public DungeonTile(IPoint loc, string regionId, bool visited, bool cleared, int numOfEnemies, IBattleManager battleManager)
         {
-            Location = loc;
+            Location = loc ?? throw new ArgumentNullException(nameof(loc));
+            _battleManager = battleManager ?? throw new ArgumentNullException(nameof(battleManager));
+
             RegionId = regionId;
             Visited = visited;
             Cleared = cleared;
+            _numOfEnemies = numOfEnemies;
         }
 
-        public void EnteredTile(IPlayer player, params object[] args)
-        {
-            List<IEnemy> enemies = new List<IEnemy>();
-            IBattleManager battleManager = null;
-            foreach (var arg in args)
-            {
-                //Can handle if I put enemies as a list or not
-                if (arg is IEnemy)
-                    enemies.Add((IEnemy)arg);
-                else if (arg is List<IEnemy> && enemies.Count == 0)
-                    enemies = (List<IEnemy>)arg;
-                else if (arg is IBattleManager && battleManager == null)
-                    battleManager = (IBattleManager)arg;
-            }
-
-            EnteredTile(player, enemies, battleManager);
-
-        }
-        private void EnteredTile(IPlayer player, List<IEnemy> enemies, IBattleManager battleManager)
+        public void EnteredTile(IPlayer player)
         {
             if (!Visited)
                 Visited = true;
@@ -53,17 +43,15 @@ namespace GameLibrary.Models.Tiles.Special
                 return;
             }
             Console.WriteLine($"You entered a {GetType().Name}");
-            Action victory = () => Victory = true;
-            Action defeat = () => Victory = false;
-
-            battleManager.InitActions(victory, defeat);
+            Action victory = () => _victory = true;
+            Action defeat = () => _victory = false;
 
 
-            foreach (var enemy in enemies)
+            foreach (var enemy in _enemies)
             {
-                battleManager.Battle(player, enemy);
+                _battleManager.Battle(player, enemy, victory, defeat);
                 Console.Clear();
-                if (!Victory)
+                if (!_victory)
                     return;
             }
 
@@ -74,47 +62,25 @@ namespace GameLibrary.Models.Tiles.Special
             Console.Clear();
         }
 
-        public object[] GetAppropriateParams(params object[] args)
+        public void SetupParamsForTile(IPlayer player)
         {
-            List<object> list = new List<object>();
-            IPlayer player = null;
-            IBattleManager battleManager = null;
-            string assemblyName = null;
-            int? numOfEnemies = null;
-
-            foreach (var arg in args)
-            {
-                if (arg is IPlayer && player == null)
-                    player = (IPlayer)arg;
-                if (arg is string && assemblyName == null)
-                    assemblyName = (string)arg;
-                if (arg is IBattleManager && battleManager == null)
-                    battleManager = (IBattleManager)arg;
-                if (arg is int && numOfEnemies == null)
-                    numOfEnemies = (int)arg;
-            }
-
-            List<IEnemy> enemies = new List<IEnemy>();
+            _enemies = new List<IEnemy>();
             //Has the last enemy be the boss
-            for (var i = 0; i < numOfEnemies + 1; i++)
+            for (var i = 0; i < _numOfEnemies + 1; i++)
             {
-                Type type = GetEnemyType(assemblyName);
+                Type type = GetEnemyType();
 
-                IEnemy enemy = (IEnemy)Activator.CreateInstance(type, new object[] { 1 + (player.PlayerStats.Level / 3), i == numOfEnemies });
+                IEnemy enemy = (IEnemy)Activator.CreateInstance(type, new object[] { 1 + (player.GetCurrentStats().Level / 3), i == _numOfEnemies });
 
-                enemies.Add(enemy);
+                _enemies.Add(enemy);
             }
-            list.Add(enemies);
-            list.Add(battleManager ?? new BattleManager());
-
-            return list.ToArray();
         }
 
-        private static Type GetEnemyType(string assemblyName)
+        private Type GetEnemyType()
         {
             var random = new Random(new Random().Next(100) + 1);
 
-            var enemies = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.Namespace.Contains(assemblyName) && !x.Name.Contains("Stats")).ToList();
+            var enemies = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.Namespace.Contains(_enemyAssemblyName) && !x.Name.Contains("Stats")).ToList();
 
             var enemyType = enemies[random.Next(enemies.Count)];
             return enemyType;

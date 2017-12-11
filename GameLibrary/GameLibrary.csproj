@@ -55,12 +55,10 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DocumentIO\XmlReader.cs" />
-    <Compile Include="Enums\ActorEnum.cs" />
     <Compile Include="Enums\MovementEnum.cs" />
     <Compile Include="Enums\TileTypeEnum.cs" />
     <Compile Include="Exceptions\CharacterApiException.cs" />
