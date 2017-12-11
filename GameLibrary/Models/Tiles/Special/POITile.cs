@@ -33,9 +33,18 @@ namespace GameLibrary.Models.Tiles.Special
         }
         public void EnteredTile(IPlayer player)
         {
-            if (!Visited)
-                Visited = true;
             Console.WriteLine($"You entered a {GetType().Name} tile");
+            if (!Visited)
+            {
+                var gainedExp = 100 * player.PlayerStats.Level;
+                player.PlayerStats.CurrentExp += gainedExp;
+                Console.WriteLine($"You have gained {gainedExp} experience points.\r\n");
+                while(player.PlayerStats.CurrentExp >= player.PlayerStats.MaxExp)
+                {
+                    player.PlayerStats.LevelUp();
+                }                
+                Visited = true;
+            }
         }
 
         public object[] GetAppropriateParams(params object[] args)

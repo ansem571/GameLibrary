@@ -23,6 +23,8 @@ namespace GameLibrary.Models.Player
 
         public void LevelUp()
         {
+            if (CurrentExp < MaxExp)
+                return;
             Console.WriteLine($"You have leveled up from {Level} to {(Level + 1)}");
             CurrentExp -= MaxExp;
             MaxExp *= (int)Math.Ceiling(1.1d);

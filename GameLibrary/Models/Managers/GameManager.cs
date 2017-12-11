@@ -34,7 +34,7 @@ namespace GameLibrary.Models.Managers
         {
             var loc = Player.CurrentLocation;
             Map.OpenMap(loc);
-            while (VictoryCondition.VictoryAchieved)
+            while (!VictoryCondition.VictoryAchieved)
             {
                 loc = Player.CurrentLocation;
                 Player.PrintStats(true);
