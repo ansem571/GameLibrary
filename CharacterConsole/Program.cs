@@ -17,7 +17,6 @@ namespace CharacterConsole
     //Here is where I can be explicit on what objects types are.
     public class Program
     {
-        [STAThread]
         private static void Main(string[] args)
         {
             if (!IsWindows())
@@ -29,7 +28,11 @@ namespace CharacterConsole
                 dir = GetPathToGlobalFiles(dir);
 
             var xmlDocPath = dir + @"\config.xml";
-            
+            using (var writer = new StreamWriter("asdf.txt"))
+            {
+                writer.WriteLine(xmlDocPath);
+            }
+
             var mapPath = dir + @"\map.png";
             var appPath = dir + @"\ImageDisplayApp.exe";
 

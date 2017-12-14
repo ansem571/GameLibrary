@@ -87,4 +87,8 @@
     <Content Include="Files\map.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(TargetDir)CharacterConsole.exe" "$(SolutionDir)Files" /y
+xcopy "$(TargetDir)*.dll" "$(SolutionDir)Files" /y</PostBuildEvent>
+  </PropertyGroup>
 </Project>
