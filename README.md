@@ -1,7 +1,7 @@
 # CharacterLibrary
-Notes are based on Version *0.1.0.4*
+Notes are based on Version *0.1.0.9*
 
-Date: 12/6/2017
+Date: 12/14/2017
 
 ## Introductions
 This will be a basis for future Project Developments.
@@ -51,9 +51,9 @@ The map works on a 2D Grid system. Each location is given a tile. The current re
 * Dungeon
 * Enemy
 * Point of Interest (POI)
-* Seaside
+* Town
 
-Once you have entered a tile, the grid will register that you have at least "visited" that location. Now when you open the map (will be opened/refreshed upon movement in console app), you will see which tiles have been visited as that tile is no longer dark/blacked out. In the console app, the image will be opened in Windows Photo Viewer. As this is a bit map, you will need to zoom in to see the map. I will update the map to be more visible at a later date. If the tile entered is a special tile, an event will occur before you return to the main game menu. If you do not complete the event at that location, the tile will still be registered as "visited" to allow the user to be aware where that location is, in order to return at a later date.
+Once you have entered a tile, the grid will register that you have at least "visited" that location. Now when you open the map (will be opened/refreshed upon movement in console app), you will see which tiles have been visited as that tile is no longer dark/blacked out. In the console app, the image will be opened in an Image Display App. If the tile entered is a special tile, an event will occur before you return to the main game menu. If you do not complete the event at that location, the tile will still be registered as "visited" to allow the user to be aware where that location is, in order to return at a later date.
 
 As stated previously, thanks to the implementation of our interfaces, we have to change almost no code in either the map or the tiles themselves in order to integrate this implementation into Unity.
 There might have to be changes to add a 3rd dimension (z-axis) for the map, but limited changes will need to be made to the entities containing those points themselves. 

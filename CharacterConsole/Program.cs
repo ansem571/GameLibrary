@@ -10,23 +10,28 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
 namespace CharacterConsole
 {
     //Here is where I can be explicit on what objects types are.
     public class Program
     {
+        [STAThread]
         private static void Main(string[] args)
         {
             if (!IsWindows())
                 throw new Exception("Not running on a windows os");
 
             //Works for getting files from desktop
-            var dir = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\Files\"));
-            var xmlDocPath = dir + $"config.xml";
-            //Needed for map to update properly
-            dir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)+"\\"; 
-            var mapPath = dir + $"map.png";
+            var dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            if (!dir.EndsWith(@"CharacterLibrary\Files"))
+                dir = GetPathToGlobalFiles(dir);
+
+            var xmlDocPath = dir + @"\config.xml";
+            
+            var mapPath = dir + @"\map.png";
+            var appPath = dir + @"\ImageDisplayApp.exe";
 
             IBattleManager battleManager = new BattleManager();
 
@@ -36,7 +41,7 @@ namespace CharacterConsole
 
             IPlayer player = SetupPlayer(reader.Width, reader.Height);
 
-            IMap map = new GlobalMap(reader.Width, reader.Height, mapPath, reader.Tiles);
+            IMap map = new GlobalMap(reader.Width, reader.Height, mapPath, appPath, reader.Tiles);
 
             var dungeons = GetDungeonTiles(map.GetMapGrid());
 
@@ -60,13 +65,19 @@ namespace CharacterConsole
             return dungeons;
         }
 
-        static bool IsWindows()
+        private static bool IsWindows()
         {
             var reg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion");
 
             string productName = (string)reg.GetValue("ProductName");
 
             return productName.StartsWith("Windows");
+        }
+
+        private static string GetPathToGlobalFiles(string dllDir)
+        {
+            var path = Directory.GetParent(dllDir).Parent.Parent.FullName + @"\Files";
+            return path;
         }
 
         private static string GetParent(string path)

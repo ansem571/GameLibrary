@@ -1,4 +1,5 @@
-﻿using GameLibrary.Interfaces;
+﻿using GameLibrary.Helpers;
+using GameLibrary.Interfaces;
 using GameLibrary.Models.Tiles.Special;
 using GameLibrary.Models.Tiles.Terrain;
 using System;
@@ -6,9 +7,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows.Forms;
+using ImageDisplayApp;
+using System.Threading.Tasks;
 
 namespace GameLibrary.Models.Maps
 {
@@ -18,15 +23,27 @@ namespace GameLibrary.Models.Maps
         private int Height;
         private Dictionary<IPoint, ITile> Grid = new Dictionary<IPoint, ITile>();
         private string PathToMap { get; set; }
-        private Process ImageProcess { get; set; }
+        private string PathToApp { get; set; }
+        //private Process ImageProcess { get; set; }
+        private string path1;
+        private string path2;
+        private string originalPath { get; set; }
+        Global_Map map;
+        Task t;
 
-        public GlobalMap(int w, int h, string path, List<List<ITile>> tiles)
+        public GlobalMap(int w, int h, string mapPath, string appPath, List<List<ITile>> tiles)
         {
             Width = w;
             Height = h;
-            PathToMap = path ?? throw new ArgumentNullException(nameof(path), "No path provided");
+            PathToMap = mapPath ?? throw new ArgumentNullException(nameof(mapPath), "No path provided");
+            PathToApp = appPath ?? throw new ArgumentNullException(nameof(appPath), "No path provided");
 
+            path1 = PathToMap.Replace("map.png", "map1.png");
+            path2 = PathToMap.Replace("map.png", "map2.png");
+            originalPath = PathToMap;
+            PathToMap = path1;
             SetupGrid(tiles);
+            map = new Global_Map(PathToMap);
         }
 
         private void SetupGrid(List<List<ITile>> tiles)
@@ -49,35 +66,51 @@ namespace GameLibrary.Models.Maps
 
         public void OpenMap(IPoint loc)
         {
-            var programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
             DrawMap(loc);
 
-            ProcessStartInfo psi = new ProcessStartInfo("rundll32.exe",
-               string.Format("\"{0}{1}\", ImageView_Fullscreen {2}",
-                Environment.Is64BitOperatingSystem ? programFiles.Replace(" (x86)", "") : programFiles,
-                @"\Windows Photo Viewer\PhotoViewer.dll",
-                PathToMap));
-            psi.WindowStyle = ProcessWindowStyle.Normal;
+            t = new Task(() => Application.Run(map));
+            t.Start();
 
-            ImageProcess = Process.Start(psi);
+            //var programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+            //ImageProcess = Process.GetProcessesByName(map.Name).First();
+
+            //ProcessStartInfo psi = new ProcessStartInfo(PathToApp);
+            //psi.WindowStyle = ProcessWindowStyle.Normal;
+
+            //ImageProcess = Process.Start(psi);
         }
         public void RedrawMap(IPoint loc)
         {
-            if (ImageProcess == null || ImageProcess.HasExited)
+            if (t.Status == TaskStatus.RanToCompletion)
+            {
+                t.Dispose();
+                map = null;
+
+                if (File.Exists(PathToMap))
+                {
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    File.Delete(PathToMap);
+                }
+                map = new Global_Map(PathToMap);
                 OpenMap(loc);
+            }
             else
+            {
+                PathToMap = PathToMap == path1 ? path2 : path1;
+
+                if (File.Exists(PathToMap))
+                {
+                    File.Delete(PathToMap);
+                }
                 DrawMap(loc);
+                map.Refresh(PathToMap);
+            }
         }
         public void CloseMap(IPoint loc)
         {
+            PathToMap = originalPath;
             DrawMap(loc);
-            if (ImageProcess != null && !ImageProcess.HasExited)
-            {
-                ImageProcess.CloseMainWindow();
-                ImageProcess.Kill();
-                Thread.Sleep(1000);
-                ImageProcess = new Process();
-            }
         }
 
         private void DrawMap(IPoint playerLoc)
@@ -91,14 +124,45 @@ namespace GameLibrary.Models.Maps
 
         private void CreateMap(byte[] data, int width, int height)
         {
-            Bitmap bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-            var bitmapData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
-            Marshal.Copy(data, 0, bitmapData.Scan0, data.Length);
-            bmp.UnlockBits(bitmapData);
-
-            bmp.Save(PathToMap, ImageFormat.Png);
+            IntPtr unmanagedPointer = Marshal.AllocHGlobal(data.Length);
+            Marshal.Copy(data, 0, unmanagedPointer, data.Length);
+            using (Bitmap bmp = new Bitmap(width, height, width * 4, PixelFormat.Format32bppRgb, unmanagedPointer))
+            {
+                try
+                {
+                    bmp.Save(PathToMap);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Console.ReadLine();
+                }
+            }
+            Marshal.FreeHGlobal(unmanagedPointer);
         }
 
+
+        private void CopyToNewLocation(Bitmap newImage)
+        {
+            var originalPath = PathToMap;
+            var tempPath = PathToMap.Replace(".png", "temp.png");
+
+            File.Move(originalPath, tempPath);
+            try
+            {
+                newImage.Save(originalPath, ImageFormat.Bmp);
+            }
+            catch
+            {
+                File.Move(originalPath, tempPath);
+                throw;
+            }
+            finally
+            {
+                newImage.Dispose();
+            }
+            File.Delete(tempPath);
+        }
         private void ResizeMapProper(byte[] data, int scale = 10)
         {
             List<byte> newData = new List<byte>();
@@ -142,7 +206,7 @@ namespace GameLibrary.Models.Maps
 
         private Bitmap ResizeMap(Bitmap bmp, int scale = 100)
         {
-            scale = scale * bmp.Height > 1000 ? 1000/bmp.Height : scale;
+            scale = scale * bmp.Height > 1000 ? 1000 / bmp.Height : scale;
 
             return new Bitmap(bmp, new Size(bmp.Width * scale, bmp.Height * scale));
         }

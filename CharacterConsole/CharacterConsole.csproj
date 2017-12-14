@@ -83,10 +83,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\..\map.png">
-      <Link>Files\map.png</Link>
-    </Content>
     <Content Include="Files\config.xml" />
+    <Content Include="Files\map.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,0 +1,8 @@
+C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\ImageDisplayApp\bin\Debug\ImageDisplayApp.exe.config
+C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\ImageDisplayApp\bin\Debug\ImageDisplayApp.exe
+C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\ImageDisplayApp\bin\Debug\ImageDisplayApp.pdb
+C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\ImageDisplayApp\obj\Debug\ImageDisplayApp.Global_Map.resources
+C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\ImageDisplayApp\obj\Debug\ImageDisplayApp.csproj.GenerateResource.Cache
+C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\ImageDisplayApp\obj\Debug\ImageDisplayApp.csproj.CoreCompileInputs.cache
+C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\ImageDisplayApp\obj\Debug\ImageDisplayApp.exe
+C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\ImageDisplayApp\obj\Debug\ImageDisplayApp.pdb

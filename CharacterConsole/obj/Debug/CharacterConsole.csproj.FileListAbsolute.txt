@@ -106,3 +106,6 @@ C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\obj\
 C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\obj\Debug\CharacterConsole.csproj.CoreCompileInputs.cache
 C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\obj\Debug\CharacterConsole.exe
 C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\obj\Debug\CharacterConsole.pdb
+C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\bin\Debug\ImageDisplayApp.exe
+C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\bin\Debug\ImageDisplayApp.pdb
+C:\Users\MRMacDonnell\Desktop\PetProjects\CharacterLibrary\CharacterConsole\bin\Debug\ImageDisplayApp.exe.config

@@ -52,6 +52,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -95,6 +96,10 @@
     <ProjectReference Include="..\GameLibrary.Interfaces\GameLibrary.Interfaces.csproj">
       <Project>{922b14b1-a587-4555-824a-9df2f258a4e9}</Project>
       <Name>GameLibrary.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ImageDisplayApp\ImageDisplayApp.csproj">
+      <Project>{f46af94b-939b-4273-86f5-9ac703c82d7c}</Project>
+      <Name>ImageDisplayApp</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
